@@ -1,4 +1,6 @@
-# vscode-today
+# Daily note
+
+[Download on marketplace](https://marketplace.visualstudio.com/items?itemName=EfimPyshnograev.vscode-today)
 
 This plugin allows to quickly open a file with a daily markdown note.
 
