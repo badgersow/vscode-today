@@ -10,14 +10,14 @@
 		"Other"
 	],
 	"activationEvents": [
-        "onCommand:vscode-today.helloWorld"
+        "onCommand:vscode-today.today"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "vscode-today.helloWorld",
-				"title": "Hello World"
+				"command": "vscode-today.today",
+				"title": "Daily note"
 			}
 		]
 	},

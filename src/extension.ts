@@ -1,26 +1,54 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
+export function dailyFilePath(instant: Date, directory: string, locale?: string) {
+	let year = instant.toLocaleDateString(locale, { year: 'numeric' });
+	let month = instant.toLocaleDateString(locale, { month: '2-digit' });
+	let day = instant.toLocaleDateString(locale, { day: '2-digit' });
+	let weekday = instant.toLocaleDateString(locale, { weekday: 'short' });
+	var filename = `${year}-${month}-${day} (${weekday}).md`;
+	var path = require('path');
+	var fullPath = path.join(directory, filename);
+	return fullPath;
+}
+
+// On a given command 'Daily note', this function opens a 'daily markdown file' in the editor
+// If the file didn't exist, it first creates a new one
 export function activate(context: vscode.ExtensionContext) {
-	
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "vscode-today" is now active!');
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('vscode-today.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from vscode-today!');
+	let disposable = vscode.commands.registerCommand('vscode-today.today', () => {
+		// This is hardcoded now, but needs to be added to settings
+		let journalPath = '/Users/efim/workspace/journal';
+		let now = new Date();
+		// This creates a canonical markdown file full path
+		var fullPath = dailyFilePath(now, journalPath);
+
+		var uri: vscode.Uri = vscode.Uri.parse(/*schema*/'file:' + fullPath);
+		let edit = new vscode.WorkspaceEdit();
+		// This creates daily file if it doesn't exist
+		edit.createFile(uri, {
+			// If a daily file exists already, we shouldn't open it
+			ignoreIfExists: true
+		});
+		// Application of the edit
+		vscode.workspace.applyEdit(edit).then(() => {
+			// Opens a file in the editor tab
+			vscode.workspace.openTextDocument(uri).then((doc: vscode.TextDocument) => {
+				// Focuses on the editor tab
+				vscode.window.showTextDocument(doc, vscode.ViewColumn.Active, false);
+			}, (error: any) => {
+				console.error('Opening a daily file didn\'t work');
+				console.error(error);
+				debugger;
+			});
+		}, (error: any) => {
+			console.error('Creating a daily file didn\'t work');
+			console.error(error);
+			debugger;
+		});
 	});
 
 	context.subscriptions.push(disposable);
 }
 
-// this method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }
