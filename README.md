@@ -17,7 +17,7 @@ A note can be opened from the menu or by assigning a shortcut to it.
 
 ## Extension Settings
 
-This extension has a configuration to specify a path for a daily nodes directory:
+This extension has a configuration to specify a path for a daily notes directory:
 
 ![feature X](img/config.png)
 
