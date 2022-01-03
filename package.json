@@ -1,8 +1,8 @@
 {
 	"name": "vscode-today",
 	"displayName": "vscode-today",
-	"description": "",
-	"version": "0.0.1",
+	"description": "A Visual Studio Code extension that allows you to quickly open daily journal file",
+	"version": "1.0.0",
 	"engines": {
 		"vscode": "^1.63.0"
 	},
@@ -12,7 +12,20 @@
 	"activationEvents": [
 		"onCommand:vscode-today.today"
 	],
+	"icon": "img/bokoblin.jpeg",
+	"homepage": "https://github.com/badgersow/vscode-today",
+	"publisher": "Efim Pyshnograev",
 	"main": "./out/extension.js",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/badgersow/vscode-today"
+	},
+	"keywords": [
+		"daily",
+		"note",
+		"memo",
+		"journal"
+	],
 	"contributes": {
 		"commands": [
 			{

@@ -2,6 +2,11 @@
 
 This plugin allows to quickly open a file with a daily markdown note.
 
+* File format: `YYYY-MM-DD (ddd).md`.
+* Example: `2022-01-03 (Mon).md`.
+
+The advantage of the ISO date format, is that lexicographical file order corresponds with the chronological order.
+
 ## Features
 
 A note can be opened from the menu or by assigning a shortcut to it.
