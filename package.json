@@ -1,5 +1,5 @@
 {
-  "name": "vscode-today",
+	"name": "vscode-today",
 	"displayName": "vscode-today",
 	"description": "",
 	"version": "0.0.1",
@@ -10,7 +10,7 @@
 		"Other"
 	],
 	"activationEvents": [
-        "onCommand:vscode-today.today"
+		"onCommand:vscode-today.today"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -19,7 +19,18 @@
 				"command": "vscode-today.today",
 				"title": "Daily note"
 			}
-		]
+		],
+		"configuration": {
+			"title": "Daily notes directory",
+			"properties": {
+				"vscode-today.dailyNotesDirectoryFullPath": {
+					"type": [
+						"string"
+					],
+					"description": "Specifies a full path to the directory, in which daily notes will be created. A directory should exist and have writable permissions. Setting key: vscode-today.dailyNotesDirectoryFullPath"
+				}
+			}
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",

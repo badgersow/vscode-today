@@ -1,4 +1,6 @@
 import * as vscode from 'vscode';
+import * as fs from 'fs';
+import * as os from 'os';
 
 export function dailyFilePath(instant: Date, directory: string, locale?: string) {
 	let year = instant.toLocaleDateString(locale, { year: 'numeric' });
@@ -11,38 +13,44 @@ export function dailyFilePath(instant: Date, directory: string, locale?: string)
 	return fullPath;
 }
 
+function expandHome(path: string): string {
+	return path.replace(/^~/, os.homedir);
+}
+
+function readJournalPath(): string | undefined {
+	let directory: string | undefined = vscode.workspace
+		.getConfiguration('vscode-today')
+		.get('dailyNotesDirectoryFullPath');
+	if (!directory) {
+		return undefined;
+	}
+	return expandHome(directory);
+}
+
 // On a given command 'Daily note', this function opens a 'daily markdown file' in the editor
 // If the file didn't exist, it first creates a new one
 export function activate(context: vscode.ExtensionContext) {
-	console.log('Congratulations, your extension "vscode-today" is now active!');
-
 	let disposable = vscode.commands.registerCommand('vscode-today.today', () => {
 		// This is hardcoded now, but needs to be added to settings
-		let journalPath = '/Users/efim/workspace/journal';
-		let now = new Date();
-		// This creates a canonical markdown file full path
-		var fullPath = dailyFilePath(now, journalPath);
+		let journalPath = readJournalPath();
+		if (!journalPath) {
+			vscode.window.showErrorMessage("Please setup 'Daily Notes Directory Full Path' in Settings");
+			return;
+		}
 
+		// This creates a canonical markdown file full path
+		var fullPath = dailyFilePath(new Date(), journalPath);
+
+		// This creates daily file if it doesn't exist, otherwise does nothing
+		createFileIfNotExists(fullPath);
+
+		// Opens a file in the editor tab
 		var uri: vscode.Uri = vscode.Uri.parse(/*schema*/'file:' + fullPath);
-		let edit = new vscode.WorkspaceEdit();
-		// This creates daily file if it doesn't exist
-		edit.createFile(uri, {
-			// If a daily file exists already, we shouldn't open it
-			ignoreIfExists: true
-		});
-		// Application of the edit
-		vscode.workspace.applyEdit(edit).then(() => {
-			// Opens a file in the editor tab
-			vscode.workspace.openTextDocument(uri).then((doc: vscode.TextDocument) => {
-				// Focuses on the editor tab
-				vscode.window.showTextDocument(doc, vscode.ViewColumn.Active, false);
-			}, (error: any) => {
-				console.error('Opening a daily file didn\'t work');
-				console.error(error);
-				debugger;
-			});
+		vscode.workspace.openTextDocument(uri).then((doc: vscode.TextDocument) => {
+			// Focuses on the editor tab
+			vscode.window.showTextDocument(doc, vscode.ViewColumn.Active, false);
 		}, (error: any) => {
-			console.error('Creating a daily file didn\'t work');
+			vscode.window.showErrorMessage("Opening a daily file has failed");
 			console.error(error);
 			debugger;
 		});
@@ -51,4 +59,11 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(disposable);
 }
 
+function createFileIfNotExists(fullPath: any) {
+	if (!fs.existsSync(fullPath)) {
+		fs.closeSync(fs.openSync(fullPath, 'w+'));
+	}
+}
+
 export function deactivate() { }
+
